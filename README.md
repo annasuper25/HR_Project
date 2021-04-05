@@ -1,2 +1,59 @@
 # HR_Project
-REST Project with Slf4j logging, Swagger, MyBatis, PostgreSQL, Liquibase
+
+REST API with Slf4j logging, Swagger, MyBatis, PostgreSQL, Liquibase, Maven, Springdoc Openapi.
+
+
+Принцип работы приложения.
+Приложение для работы с данными сотрудников, которые имеют опыт работы, находятся в иерархии подчинения, и распределены географически по департаментам.
+На сервер localhost:8080 отправляются следующие запросы:
+
+**АПИ локаций**  
+POST /locations - добавление новой локации, ожидается отправка в Request body JSON с данными новой локации
+GET /locations - получение списка всех локаций в виде JSON
+GET /locations/{locationId} - получение локации по id в виде JSON
+
+
+**АПИ департаментов**  
+POST /departments - добавление нового департамента, 
+PUT /departments - обновление данных департамента, 
+GET /departments/{departmentId} - получение по id вместе с привязанной локацией и ФИО+id главы департамента, 
+GET /departments - получение списка всех департаментов(*с возможностью фильтрации по названию, фамилии главы).
+
+
+**АПИ сотрудников**
+GET /employees/{employeeId} - получение по id (*со всеми зависимыми сущностями), 
+GET /employees - получение списка (*с возможностью поиска по фамилии, имени, email, диапазоном даты устройства на работу)
+
+Приложение залогировано, ошибки уровня ERROR выводятся в файл tests.log в корневую папку проекта, 
+всё остальное - выводится в консоль.
+
+
+Шаги для запуска приложения:
+
+1. Создать локальную БД 
+CREATE DATABASE hr_sample;
+
+2. В application.yaml указаны следующие поля
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5433/hr_sample
+    username: username
+    password: password
+	
+Заменить:
+
+url - указать url(путь) к созданной БД;
+username - логин от БД;
+password - пароль от БД;
+
+
+3. Применить миграцию командой в консоли IDEA:
+mvn -Plocal liquibase:update
+Будут созданы таблицы в БД.
+
+4. При необходимости заполните таблицы данными, выполнив команды из файла init_data.sql
+
+5. Запустить приложение
+
+6. После запуска приложения открыть в браузере страницу http://localhost:8080/swagger-ui.html
